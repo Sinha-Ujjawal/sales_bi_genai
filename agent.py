@@ -18,6 +18,7 @@ from load_dotenv import load_dotenv
 from mem0 import Memory
 
 import db
+import utils.mlflow_ollama as mlflow_ollama
 from app_config import AppConfig
 from utils.batch import batched
 from utils.date import get_last_n_quarters
@@ -26,6 +27,7 @@ from utils.sql import parse_sql
 
 load_dotenv(override=True)
 
+mlflow_ollama.autolog()
 mlflow_langchain.autolog()
 
 logger = logging.getLogger(__name__)
