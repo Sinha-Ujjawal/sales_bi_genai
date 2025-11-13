@@ -19,6 +19,7 @@ from mem0 import Memory
 
 import db
 import utils.mlflow_ollama as mlflow_ollama
+import utils.patch_mem0 as _  # noqa
 from app_config import AppConfig
 from utils.batch import batched
 from utils.date import get_last_n_quarters
