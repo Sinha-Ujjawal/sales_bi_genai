@@ -1,0 +1,7 @@
+venv
+mlruns
+mlartifacts
+**/__pycache__
+data.db*
+mem0_*.db*
+mem0_*.kuzu*

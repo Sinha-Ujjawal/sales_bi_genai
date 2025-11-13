@@ -1,0 +1,47 @@
+_target_: app_config.AppConfig
+
+db_config:
+  _target_: app_config.db_config.DBConfig
+  engine_expr: |
+    import sqlalchemy as sa
+    engine = sa.create_engine(url=f"sqlite:///./data.db", poolclass=sa.pool.QueuePool)
+  table_stats_queries:
+    - "select distinct category from products"
+    - "select distinct region_name from regions"
+
+mem0_config:
+  _target_: mem0.configs.base.MemoryConfig
+  vector_store:
+    _target_: mem0.vector_stores.configs.VectorStoreConfig
+    provider: qdrant
+    config:
+      path: "./mem0_qdrant.db"
+      collection_name: mem0_history
+      embedding_model_dims: ${oc.decode:${oc.env:MEM0_OLLAMA_EMBEDDER_MODEL_EMBEDDING_DIMS,768}}
+  llm:
+    _target_: mem0.llms.configs.LlmConfig
+    provider: ollama
+    config:
+      model: "${oc.env:MEM0_OLLAMA_MODEL,gpt-oss:20b}"
+      temperature: 0.0
+      ollama_base_url: "${oc.env:MEM0_OLLAMA_HOST,http://localhost:11434/}"
+  embedder:
+    _target_: mem0.embeddings.configs.EmbedderConfig
+    provider: ollama
+    config:
+      model: "${oc.env:MEM0_OLLAMA_EMBEDDER_MODEL,nomic-embed-text}"
+      embedding_dims: ${oc.decode:${oc.env:MEM0_OLLAMA_EMBEDDER_MODEL_EMBEDDING_DIMS,768}}
+      ollama_base_url: "${oc.env:MEM0_OLLAMA_HOST,http://localhost:11434/}"
+  history_db_path: "./mem0_history.db"
+  graph_store:
+    _target_: mem0.graphs.configs.GraphStoreConfig
+    provider: kuzu
+    config:
+      db: "./mem0_knowledge_graph.kuzu"
+    llm:
+      _target_: mem0.llms.configs.LlmConfig
+      provider: ollama
+      config:
+        model: "${oc.env:MEM0_OLLAMA_MODEL,gpt-oss:20b}"
+        temperature: 0.0
+        ollama_base_url: "${oc.env:MEM0_OLLAMA_HOST,http://localhost:11434/}"
